@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'securerandom'
 require 'digest/md5'
 require 'open-uri'
@@ -135,8 +136,9 @@ class User < ApplicationRecord
 
   # 是否能发帖
   def newbie?
-    return false if verified? || hr?
-    created_at > 1.week.ago
+    false
+    # return false if verified? || hr?
+    # created_at > 1.week.ago
   end
 
   def blocked?
