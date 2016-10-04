@@ -5,6 +5,7 @@ s1 = Section.create(name: 'Tricking')
 Node.create(name: '新手问题', summary: '...', section_id: s1.id)
 Node.create(name: '精彩视频', summary: '...', section_id: s1.id)
 Node.create(name: '教学', summary: '...', section_id: s1.id)
+Node.create(name: '训练日记', summary: '...', section_id: s1.id)
 
 s2 = Section.create(name: '极限运动')
 Node.create(name: '跑酷', summary: '...', section_id: s2.id)
