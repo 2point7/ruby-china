@@ -33,7 +33,7 @@ gem 'bulk_insert'
 
 # 上传组件
 gem 'carrierwave'
-gem 'carrierwave-upyun'
+# gem 'carrierwave-upyun'
 gem 'mini_magick'
 
 # 验证码，头像

@@ -30,6 +30,19 @@ class BaseUploader < CarrierWave::Uploader::Base
     unless version_name.in?(ALLOW_VERSIONS)
       raise "ImageUploader version_name:#{version_name} not allow."
     end
-    [@url, version_name].join('!') # thumb split with "!"
+    # [@url, version_name].join('!') # thumb split with "!"
+
+    case version_name.to_sym
+    when :xs
+      small.url
+    when :sm
+      normal.url
+    when :md
+      big.url
+    when :lg
+      large.url
+    else
+      url
+    end
   end
 end
