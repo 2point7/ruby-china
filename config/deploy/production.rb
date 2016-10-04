@@ -1,1 +1,1 @@
-server 'ruby-china.org', user: 'ruby', roles: %w{app db web}
+server 'www.tricking-china.com', user: 'y', roles: %w{app db web}
