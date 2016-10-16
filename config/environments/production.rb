@@ -42,7 +42,7 @@ Rails.application.configure do
   # Action Cable endpoint configuration
   # config.action_cable.url = 'wss://example.com/cable'
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
-  config.action_cable.allowed_request_origins = %w(https://ruby-china.org)
+  config.action_cable.allowed_request_origins = %w(http://tricking-china.com)
 
   # Don't mount Action Cable in the main server process.
   # config.action_cable.mount_path = nil
@@ -69,8 +69,19 @@ Rails.application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
   config.action_mailer.default_url_options = { host: Setting.domain, protocol: Setting.protocol }
-  config.action_mailer.delivery_method   = :postmark
-  config.action_mailer.postmark_settings = { api_key: Setting.email_password }
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+
+  # Config action_mailer
+  config.action_mailer.smtp_settings = {
+    address:        Rails.application.secrets.action_mailer_smtp_settings["address"],
+    port:           25,
+    user_name:      Rails.application.secrets.action_mailer_smtp_settings["user_name"],
+    password:       Rails.application.secrets.action_mailer_smtp_settings["password"],
+    authentication: 'plain',
+    enable_starttls_auto: true
+  }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
