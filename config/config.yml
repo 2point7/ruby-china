@@ -61,6 +61,7 @@ defaults: &defaults
   https: false
   admin_emails:
     - "admin@admin.com"
+    - "yfractal@qq.com"
   google_analytics_key: ""
   upload_url: ""
   asset_host: ""
@@ -68,8 +69,8 @@ defaults: &defaults
   upyun_password: ""
   upyun_bucket: ""
   email_server: ""
-  email_sender: ''
-  email_password: ''
+  email_sender: "tricking_china@163.com"
+  email_password: ""
   github_token: ""
   github_secret: ""
   twitter_id: ""
