@@ -16,7 +16,7 @@ class BaseUploader < CarrierWave::Uploader::Base
   ALLOW_VERSIONS = %w(xs sm md lg large)
 
   def store_dir
-    model.class.to_s.underscore
+    "uploads/#{model.class.to_s.underscore}"
   end
 
   def extension_white_list

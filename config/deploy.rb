@@ -9,7 +9,7 @@ set :puma_conf, "#{release_path}/config/puma-web.rb"
 
 append :linked_files, *%w(config/secrets.yml config/database.yml config/config.yml
                           config/elasticsearch.yml config/redis.yml)
-append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'public/assets'
+append :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'public/assets', 'public/uploads'
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
