@@ -11,6 +11,8 @@ s2 = Section.create(name: '极限运动')
 Node.create(name: '跑酷', summary: '...', section_id: s2.id)
 Node.create(name: 'XMA', summary: '...', section_id: s2.id)
 Node.create(name: '双节棍', summary: '...', section_id: s2.id)
+Node.create(name: '街舞', summary: '...', section_id: s2.id)
+
 # s4 = Section.create(name: "分享")
 # Node.create(name: 'Jobs', summary: '...', section_id: s4.id, id: 25)
 
