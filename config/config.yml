@@ -18,7 +18,7 @@ site_configs: &site_configs
     </ul>
   footer_html: >
     <p class="copyright">
-     &copy; Powered by <a href="https://github.com/ruby-china/ruby-china">ruby-china</a>.
+     &copy; Powered by <a href="#">tricking-china</a>.
     </p>
   after_topic_html: ""
   before_topic_html: ""
@@ -55,9 +55,9 @@ site_configs: &site_configs
 
 defaults: &defaults
   <<: *site_configs
-  app_name: "Ruby China"
-  foot_html: "&copy; Ruby China."
-  domain: "localhost:3000"
+  app_name: "Tricking China"
+  foot_html: "&copy; Tricking China."
+  domain: "localhost:3800"
   https: false
   admin_emails:
     - "admin@admin.com"
