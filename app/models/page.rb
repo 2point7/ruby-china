@@ -1,6 +1,3 @@
-# 单页的文档页面
-# 采用 Markdown 编写
-require 'redcarpet'
 class Page < ApplicationRecord
   include MarkdownBody
   include Searchable
@@ -65,5 +62,9 @@ class Page < ApplicationRecord
 
   def self.find_by_slug(slug)
     fetch_by_uniq_keys(slug: slug)
+  end
+
+  def as_indexed_json(_options = {})
+    as_json(only: [:title, :body])
   end
 end

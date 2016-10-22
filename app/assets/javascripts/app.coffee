@@ -12,6 +12,7 @@
 #= require dropzone
 #= require jquery.fluidbox.min
 #= require social-share-button
+#= require social-share-button/wechat
 #= require jquery.atwho
 #= require emoji-data
 #= require emoji-modal
@@ -24,6 +25,8 @@
 #= require turbolinks
 #= require google_analytics
 #= require jquery.infinitescroll.min
+#= require d3.min
+#= require cal-heatmap.min
 #= require_self
 
 AppView = Backbone.View.extend
@@ -339,5 +342,9 @@ window.App =
 
 document.addEventListener 'turbolinks:load',  ->
   window._appView = new AppView()
+
+document.addEventListener 'turbolinks:click', (event) ->
+  if event.target.getAttribute('href').charAt(0) is '#'
+    event.preventDefault()
 
 FormStorage.init()

@@ -4,17 +4,16 @@ module Api
       before_action :doorkeeper_authorize!, except: [:index, :show, :replies]
       before_action :set_topic, except: [:index, :create]
 
-      ##
       # 获取话题列表，类似网站的 /topics 的结构，支持多种排序方式。
       #
       # GET /api/v3/topics
       #
-      # params:
-      #   type - 排序类型, default: last_actived, %w(last_actived recent no_reply popular excellent),
-      #   node_id - 节点编号，如果有给，就会只去节点下的话题
-      #   offset - default: 0
-      #   limit - default: 20, range: 1..150
+      # @param type [String] 排序类型, default: `last_actived`, %w(last_actived recent no_reply popular excellent)
+      # @param node_id [Integer] 节点编号，如果有给，就会只去节点下的话题
+      # @param offset [Integer] default: 0
+      # @param limit [Integer] default: 20, range: 1..150
       #
+      # @return [Array<TopicTopicSerializer>]
       def index
         optional! :type, default: 'last_actived',
                          values: %w(last_actived recent no_reply popular excellent)
@@ -48,11 +47,16 @@ module Api
         render json: @topics
       end
 
-      ##
       # 获取话题详情（不含回帖）
       #
       # GET /api/v3/topics/:id
       #
+      # @param id [Integer] 话题编号
+      # @return [TopicDetailSerializer] 此外 meta 里面包含当前用户对此话题的状态
+      #
+      # ```json
+      # { followed: '是否已关注', liked: '是否已赞', favorited: '是否已收藏' }
+      # ```
       def show
         @topic.hits.incr(1)
         meta = { followed: false, liked: false, favorited: false }
@@ -68,16 +72,14 @@ module Api
         render json: @topic, serializer: TopicDetailSerializer, meta: meta
       end
 
-      ##
       # 创建新话题
       #
       # POST /api/v3/topics
       #
-      # params:
-      #   title - 标题, [required]
-      #   node_id - 节点编号, [required]
-      #   body - Markdown 格式的正文, [required]
-      #
+      # @param title [String] 标题, [required]
+      # @param node_id [Integer] 节点编号, [required]
+      # @param body [Markdown] 格式的正文, [required]
+      # @return [TopicDetailSerializer]
       def create
         requires! :title
         requires! :body
@@ -92,16 +94,14 @@ module Api
         render json: @topic, serializer: TopicDetailSerializer
       end
 
-      ##
       # 更新话题
       #
       # POST /api/v3/topics/:id
       #
-      # params:
-      #   title - 标题, [required]
-      #   node_id - 节点编号, [required]
-      #   body - Markdown 格式的正文, [required]
-      #
+      # @param title [String] 标题, [required]
+      # @param node_id [Integer] 节点编号, [required]
+      # @param body [String] Markdown 格式的正文, [required]
+      # @return [TopicDetailSerializer]
       def update
         requires! :title
         requires! :body
@@ -125,26 +125,22 @@ module Api
         render json: @topic, serializer: TopicDetailSerializer
       end
 
-      ##
       # 删除话题
       #
       # DELETE /api/v3/topics/:id
-      #
       def destroy
         raise AccessDenied unless can?(:destroy, @topic)
         @topic.destroy_by(current_user)
         render json: { ok: 1 }
       end
 
-      ##
       # 获取话题的回帖列表
       #
       # GET /api/v3/topics/:id/replies
       #
-      # params:
-      #   offset - default: 0
-      #   limit - default: 20, range: 1..150
-      #
+      # @param offset [Integer] default: 0
+      # @param limit [Integer] default: 20, range: 1..150
+      # @return [Array<ReplySerializer]>
       def replies
         if request.post?
           create_replies
@@ -169,14 +165,12 @@ module Api
         render json: @replies, meta: { user_liked_reply_ids: @user_liked_reply_ids }
       end
 
-      ##
       # 创建对话题的回帖
       #
       # POST /api/v3/topics/:id/replies
       #
-      # params:
-      #   body - 回帖内容，[required]
-      #
+      # @param body [String] 回帖内容，[required]
+      # @return [ReplySerializer] 创建的回帖信息
       def create_replies
         doorkeeper_authorize!
 
@@ -190,54 +184,68 @@ module Api
         render json: @reply
       end
 
-      ##
       # 关注话题
       #
       # POST /api/v3/topics/:id/follow
-      #
       def follow
         @topic.push_follower(current_user.id)
         render json: { ok: 1 }
       end
 
-      ##
       # 取消关注话题
       #
       # POST /api/v3/topics/:id/unfollow
-      #
       def unfollow
         @topic.pull_follower(current_user.id)
         render json: { ok: 1 }
       end
 
-      ##
       # 收藏话题
       #
       # POST /api/v3/topics/:id/favorite
-      #
       def favorite
         current_user.favorite_topic(@topic.id)
         render json: { ok: 1 }
       end
 
-      ##
       # 取消收藏话题
       #
       # POST /api/v3/topics/:id/unfavorite
-      #
       def unfavorite
         current_user.unfavorite_topic(@topic.id)
         render json: { ok: 1 }
       end
 
-      ##
       # 屏蔽话题，移到 NoPoint 节点 (Admin only)
+      # [废弃] 请用 POST /api/v3/topics/:id/action
       #
       # POST /api/v3/topics/:id/ban
-      #
       def ban
         raise AccessDenied.new('当前用户没有屏蔽别人话题的权限，具体请参考官网的说明。') unless can?(:ban, @topic)
         @topic.ban!
+        render json: { ok: 1 }
+      end
+
+      # 更多功能
+      # 注意类型有不同的权限，详见 GET /api/v3/topics/:id 返回的 abilities
+      #
+      # POST /api/v3/topics/:id/action?type=:type
+      # @param type [String] 动作类型, ban - 屏蔽话题, excellent - 加精华, unexcellent - 去掉精华, close - 关闭回复, open - 开启回复
+      def action
+        raise AccessDenied unless can?(params[:type].to_sym, @topic)
+
+        case params[:type]
+        when 'excellent'
+          @topic.excellent!
+        when 'unexcellent'
+          @topic.unexcellent!
+        when 'ban'
+          @topic.ban!
+        when 'close'
+          @topic.close!
+        when 'open'
+          @topic.open!
+        end
         render json: { ok: 1 }
       end
 

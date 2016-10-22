@@ -1,4 +1,3 @@
-require 'carrierwave/processing/mini_magick'
 class BaseUploader < CarrierWave::Uploader::Base
   include CarrierWave::MiniMagick
 
@@ -44,5 +43,10 @@ class BaseUploader < CarrierWave::Uploader::Base
     else
       url
     end
+    # if Setting.upload_provider == 'aliyun'
+    #   super(thumb: "@!#{version_name}")
+    # else
+    #   [@url, version_name].join('!')
+    # end
   end
 end

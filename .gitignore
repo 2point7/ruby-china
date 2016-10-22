@@ -7,12 +7,14 @@ log/*.log
 log/*.log*
 tmp/**/*
 .sass-cache/
+.yardoc/
 public/assets/
 config/database.yml
 config/mongoid.yml
 config/thin.yml
 config/redis.yml
 config/mailer_daemon.yml
+config/config.yml
 config/secrets.yml
 public/uploads/**/*
 public/photo/*
@@ -24,6 +26,7 @@ public/topics/**/*
 .DS_Store
 *.swp
 *.swo
+*.sublime-workspace
 .rvmrc
 vendor/ruby
 doc/wiki_repo

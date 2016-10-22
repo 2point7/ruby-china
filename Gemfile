@@ -1,4 +1,4 @@
-if ENV['USE_OFFICIAL_GEM_SOURCE']
+if ENV['TRAVIS']
   source 'https://rubygems.org'
 else
   source 'https://gems.ruby-china.org'
@@ -15,12 +15,12 @@ gem 'turbolinks', '~> 5.0.0'
 gem 'dropzonejs-rails'
 
 gem 'pg'
+gem 'pghero'
 
 gem 'rack-attack'
 
-gem 'rails-i18n', '5.0.0.beta4'
+gem 'rails-i18n'
 gem 'http_accept_language'
-gem 'rails_autolink'
 gem 'twemoji'
 gem 'jquery-atwho-rails'
 gem 'font-awesome-rails'
@@ -35,6 +35,10 @@ gem 'bulk_insert'
 gem 'carrierwave'
 # gem 'carrierwave-upyun'
 gem 'mini_magick'
+
+# Aliyun / Upyun 可选项
+# gem 'carrierwave-upyun'
+# gem 'carrierwave-aliyun'
 
 # 验证码，头像
 gem 'rucaptcha'
@@ -52,8 +56,8 @@ gem 'ruby-push-notifications'
 gem 'will_paginate'
 
 # 搜索
-gem 'elasticsearch-model'
-gem 'elasticsearch-rails'
+gem 'elasticsearch-model', git: 'https://github.com/elasticsearch/elasticsearch-rails'
+gem 'elasticsearch-rails', git: 'https://github.com/elasticsearch/elasticsearch-rails'
 gem 'redis-search'
 
 # 三方平台 OAuth 验证登陆
@@ -68,6 +72,7 @@ gem 'redis'
 gem 'hiredis'
 gem 'redis-namespace'
 gem 'redis-objects'
+gem 'redis-session-store'
 
 # Cache
 gem 'second_level_cache'
@@ -75,9 +80,10 @@ gem 'second_level_cache'
 # Setting
 gem 'rails-settings-cached'
 
-# Markdown
-gem 'redcarpet', '~> 3.3.4'
-gem 'rouge'
+# HTML Pipeline
+gem 'html-pipeline'
+gem 'html-pipeline-rouge_filter'
+gem 'redcarpet'
 gem 'auto-space'
 
 # 队列
@@ -109,17 +115,13 @@ gem 'rack-cors', require: 'rack/cors'
 gem 'rack-utf8_sanitizer'
 
 # gem 'oneapm_rpm'
+
 gem 'exception_notification'
 gem 'status-page'
 
 gem 'bundler-audit', require: false
 
 group :development do
-  gem 'capistrano'
-  gem 'capistrano-rails'
-  gem 'capistrano-rvm'
-  gem 'capistrano-sidekiq', require: false
-  gem 'capistrano3-puma'
   gem 'derailed'
   # Better Errors
   gem 'better_errors'
@@ -137,6 +139,7 @@ group :development, :test do
   gem 'capybara'
   gem 'jasmine-rails', '~> 0.10.2'
   gem 'letter_opener'
+  gem 'yard'
 
   gem 'codecov', require: false
   gem 'pry-byebug'

@@ -24,7 +24,11 @@ class TopicsController < ApplicationController
     @topics = @topics.fields_for_list
     @topics = @topics.paginate(page: params[:page], per_page: 22, total_entries: 1500).to_a
     @page_title = t('menu.topics')
-    fresh_when([@suggest_topics, @topics])
+    @read_topic_ids = []
+    if current_user
+      @read_topic_ids = current_user.filter_readed_topics(@topics + @suggest_topics)
+    end
+    fresh_when([@suggest_topics, @topics, @read_topic_ids])
   end
 
   def feed
@@ -36,7 +40,7 @@ class TopicsController < ApplicationController
     @node = Node.find(params[:id])
     @topics = @node.topics.last_actived.fields_for_list
     @topics = @topics.includes(:user).paginate(page: params[:page], per_page: 25)
-    title = @node.jobs? ? @node.name : "#{@node.name} &raquo; #{t('menu.topics')}"
+    title = @node.id == Node.job.id ? @node.name : "#{@node.name} &raquo; #{t('menu.topics')}"
     @page_title = [@node.name, t('menu.topics')].join(' · ')
     if stale?(etag: [@node, @topics], template: 'topics/index')
       render action: 'index'
@@ -87,13 +91,14 @@ class TopicsController < ApplicationController
     @topic.hits.incr(1)
     @node = @topic.node
     @show_raw = params[:raw] == '1'
+    @can_reply = can? :create, Reply
 
     @replies = Reply.unscoped.where(topic_id: @topic.id).without_body.order(:id).all
 
     check_current_user_liked_replies
     check_current_user_status_for_topic
     set_special_node_active_menu
-    fresh_when([@topic, @node, @show_raw, @replies, @has_followed, @has_favorited])
+    fresh_when([@topic, @node, @show_raw, @replies, @has_followed, @has_favorited, @can_reply])
   end
 
   def new
@@ -231,7 +236,7 @@ class TopicsController < ApplicationController
 
   def set_special_node_active_menu
     case @node.try(:id)
-    when Node.jobs_id
+    when Node.job.id
       @current = ['/jobs']
     end
   end

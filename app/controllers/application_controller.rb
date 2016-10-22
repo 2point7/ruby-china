@@ -3,12 +3,12 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   helper_method :unread_notify_count
   helper_method :turbolinks_app?
-  before_filter :expire_hsts
 
   # Addition contents for etag
   etag { current_user.try(:id) }
   etag { unread_notify_count }
   etag { flash }
+  etag { Setting.navbar_html }
   etag { Setting.footer_html }
   etag { Rails.env.development? ? Time.now : Date.current }
 
@@ -125,9 +125,5 @@ class ApplicationController < ActionController::Base
 
   def http_head_locale
     http_accept_language.language_region_compatible_from(I18n.available_locales)
-  end
-
-  def expire_hsts
-    response.headers["Strict-Transport-Security"] = 'max-age=0'
   end
 end
