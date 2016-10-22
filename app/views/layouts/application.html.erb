@@ -9,35 +9,38 @@
   <link rel="apple-touch-icon-precomposed" href="<%= asset_path("ios-icon.png") %>" />
   <!-- <link rel="shortcut icon" href="<%= asset_path("big_logo.png") %>" /> -->
   <link rel="alternate" type="application/rss+xml" title="订阅最新帖" href="<%= main_app.feed_topics_url %>" />
-  <link rel="mask-icon" href="<%= asset_path("mask.svg") %>"/>
   <%= stylesheet_link_tag "front", 'data-turbolinks-track': "reload" %>
   <%= stylesheet_link_tag "turbolinks-app", 'data-turbolinks-track': 'reload' if turbolinks_app? %>
   <%= action_cable_meta_tag %>
-  <%= javascript_include_tag "app", 'data-turbolinks-track': "reload" %>
-  <script src="//ruby-china-files.b0.upaiyun.com/assets/d3.min.js" data-turbolinks-track="reload" type="text/javascript"></script>
-  <script src="//ruby-china-files.b0.upaiyun.com/assets/cal-heatmap.min.js" data-turbolinks-track="reload" type="text/javascript"></script>
   <%= csrf_meta_tag %>
   <%= raw Setting.custom_head_html %>
   <% if current_user %>
     <meta name="current-user" data-user-id="<%= current_user.id %>" data-user-login="<%= current_user.login %>" data-user-name="<%= current_user.name %>" data-user-email="<%= current_user.email %>" data-user-avatar-url="<%= current_user.avatar? ? current_user.avatar.url(:md) : current_user.letter_avatar_url(96) %>">
   <% end %>
+
+  <%= javascript_include_tag "app", 'data-turbolinks-track': "reload" %>
 </head>
 <body class="page-<%= controller_name %><%= ' infinite-scroll' if turbolinks_app? %>" data-controller-name="<%= controller_name %>">
   <div class="header">
     <nav class="navbar navbar-inverse navbar-fixed-top navbar-default">
       <div class="container">
         <div class="navbar-header" id="navbar-header" data-turbolinks-permanent>
-          <a href="/" class="navbar-brand"><b>Tricking</b> China</a>
+          <%= raw Setting.navbar_brand_html %>
         </div>
 
         <div id="main-nav-menu">
-          <%= render_list class: "nav navbar-nav" do |li|
-             li << link_to(t("menu.topics"), main_app.topics_path)
-             li << link_to(t("menu.wiki"), main_app.pages_path) if !mobile?
-             # li << link_to(t("menu.jobs"), main_app.jobs_path)
-             li << link_to(t("menu.sites"), main_app.sites_path) if !mobile?
-             # li << link_to(t("menu.gems"), 'https://gems.ruby-china.org', target: '_blank') if !mobile?
-          end %>
+          <ul class="nav navbar-nav">
+            <li class="nav-topics"><%= link_to(t("menu.topics"), main_app.topics_path) %></li>
+            <% if !mobile? %>
+            <li class="nav-pages"><%= link_to(t("menu.wiki"), main_app.pages_path) %></li>
+            <li class="nav-sites"><%= link_to(t("menu.sites"), main_app.sites_path) %></li>
+            <% end %>
+            <%= raw Setting.navbar_html %>
+            <script type="text/javascript">
+            $('.navbar-nav .nav-<%= controller_name %>').addClass("active");
+            </script>
+          </ul>
+
         </div>
 
         <%= render "common/user_nav" %>
@@ -101,7 +104,7 @@
   <% end %>
   <script type="text/javascript" data-turbolinks-eval="false">
     App.root_url = "<%= main_app.root_url %>";
-    App.asset_url = "<%= Setting.upload_url %>";
+    App.asset_url = "<%= Setting.upload_url -%>";
     App.twemoji_url = "<%= Twemoji.configuration.asset_root %>";
     App.locale = "<%= I18n.locale %>";
     <% if current_user %>

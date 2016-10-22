@@ -1,7 +1,4 @@
-require 'carrierwave/processing/mini_magick'
 class BaseUploader < CarrierWave::Uploader::Base
-  include CarrierWave::MiniMagick
-
   # 在 UpYun 或其他平台配置图片缩略图
   # http://docs.upyun.com/guide/#_12
   # Avatar
@@ -44,5 +41,10 @@ class BaseUploader < CarrierWave::Uploader::Base
     else
       url
     end
+    # if Setting.upload_provider == 'aliyun'
+    #   super(thumb: "@!#{version_name}")
+    # else
+    #   [@url, version_name].join('!')
+    # end
   end
 end

@@ -72,9 +72,9 @@ describe User, type: :model do
 
       it 'should work' do
         expect(user1.login).to eq('ReiIs123')
-        expect(User.find_login('ReiIs123').id).to eq(user1.id)
-        expect(User.find_login('reiis123').id).to eq(user1.id)
-        expect(User.find_login('rEIIs123').id).to eq(user1.id)
+        expect(User.find_by_login('ReiIs123').id).to eq(user1.id)
+        expect(User.find_by_login('reiis123').id).to eq(user1.id)
+        expect(User.find_by_login('rEIIs123').id).to eq(user1.id)
       end
     end
   end
@@ -102,10 +102,10 @@ describe User, type: :model do
     it 'user can soft_delete' do
       user_for_delete1.soft_delete
       user_for_delete1.reload
-      expect(user_for_delete1.state).to eq(-1)
+      expect(user_for_delete1.state).to eq('deleted')
       user_for_delete2.soft_delete
       user_for_delete1.reload
-      expect(user_for_delete1.state).to eq(-1)
+      expect(user_for_delete1.state).to eq('deleted')
       expect(user_for_delete1.authorizations).to eq([])
     end
   end
@@ -360,29 +360,29 @@ describe User, type: :model do
     end
   end
 
-  describe '#find_login!' do
+  describe '#find_by_login!' do
     let(:user) { create :user }
 
     it 'should work' do
-      u = User.find_login!(user.login)
+      u = User.find_by_login!(user.login)
       expect(u.id).to eq user.id
       expect(u.login).to eq(user.login)
     end
 
     it 'should ignore case' do
-      u = User.find_login!(user.login.upcase)
+      u = User.find_by_login!(user.login.upcase)
       expect(u.id).to eq user.id
     end
 
     it 'should raise DocumentNotFound error' do
       expect do
-        User.find_login!(user.login + '1')
+        User.find_by_login!(user.login + '1')
       end.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'should railse DocumentNotFound if have bad login' do
       expect do
-        User.find_login!(user.login + ')')
+        User.find_by_login!(user.login + ')')
       end.to raise_error(ActiveRecord::RecordNotFound)
     end
 
@@ -392,7 +392,7 @@ describe User, type: :model do
       let(:user2) { create :user, login: 'a2foo' }
 
       it 'should get right user' do
-        u = User.find_login!(user1.login)
+        u = User.find_by_login!(user1.login)
         expect(u.id).to eq user1.id
         expect(u.login).to eq(user1.login)
       end
@@ -544,6 +544,13 @@ describe User, type: :model do
       expect(User.find_for_database_authentication(login: 'foo').id).to eq user.id
       expect(User.find_for_database_authentication(login: 'foobar@gmail.com').id).to eq user.id
       expect(User.find_for_database_authentication(login: 'not found')).to eq nil
+    end
+
+    context 'deleted user' do
+      it "should nil" do
+        user.update_attributes(state: -1)
+        expect(User.find_for_database_authentication(login: 'foo')).to eq nil
+      end
     end
   end
 

@@ -7,6 +7,7 @@ log/*.log
 log/*.log*
 tmp/**/*
 .sass-cache/
+.yardoc/
 public/assets/
 config/database.yml
 config/mongoid.yml
@@ -24,6 +25,7 @@ public/topics/**/*
 .DS_Store
 *.swp
 *.swo
+*.sublime-workspace
 .rvmrc
 vendor/ruby
 doc/wiki_repo
